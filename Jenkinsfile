@@ -43,14 +43,14 @@ pipeline {
                 milestone(1)
                 withCredentials(bindings:[sshUserPrivateKey(credentialsId: 'webserver_login', keyFileVariable: 'EC2SSH', passphraseVariable: '', usernameVariable: '')]) {
                     script {
-                        sh "ssh ec2-user@$prod_ip \"docker pull fieldhousem/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh ec2-user@$prod_ip \"sudo docker pull fieldhousem/train-schedule:${env.BUILD_NUMBER}\""
                         try {
-                            sh "ssh ec2-user@$prod_ip \"docker stop train-schedule\""
-                            sh "ssh ec2-user@$prod_ip \"docker rm train-schedule\""
+                            sh "ssh ec2-user@$prod_ip \"sudo docker stop train-schedule\""
+                            sh "ssh ec2-user@$prod_ip \"sudo docker rm train-schedule\""
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        sh "ssh ec2-user@$prod_ip \"docker run --restart always --name train-schedule -p 8080:8080 -d fieldhousem/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh ec2-user@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d fieldhousem/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
